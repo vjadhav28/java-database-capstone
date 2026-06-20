@@ -1,8 +1,25 @@
 package com.project.back_end.models;
 
+import jakarta.persistence.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "prescriptions")
 public class Prescription {
 
-  // @Document annotation:
+    @Id
+    private String id;
+
+    private String patientName;
+
+    private Long appointmentId;
+
+    private String medication;
+
+    private String dosage;
+
+    private String doctorNotes;
+
+//   @Document annotation:
 //    - Marks the class as a MongoDB document (a collection in MongoDB).
 //    - The collection name is specified as "prescriptions" to map this class to the "prescriptions" collection in MongoDB.
 
@@ -12,6 +29,7 @@ public class Prescription {
 //      - Represents the unique identifier for each prescription.
 //      - The @Id annotation marks it as the primary key in the MongoDB collection.
 //      - The id is of type String, which is commonly used for MongoDB's ObjectId as it stores IDs as strings in the database.
+//
 
 // 2. 'patientName' field:
 //    - Type: private String
