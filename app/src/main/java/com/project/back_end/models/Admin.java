@@ -76,5 +76,3 @@ public class Admin {
 // 5. Getters and Setters:
 //    - Standard getter and setter methods are provided for accessing and modifying the fields.
 
-
-}
