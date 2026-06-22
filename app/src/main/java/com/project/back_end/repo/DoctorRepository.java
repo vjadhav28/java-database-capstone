@@ -10,13 +10,9 @@ import java.util.List;
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Doctor findByEmail(String email);
-
-    Doctor findByUsername(String username);
+    List<Doctor> findByNameLike(String name);
     List<Doctor> findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(String name, String specialty);
-
     List<Doctor> findBySpecialtyIgnoreCase(String specialty);
-
-     List<Doctor> findByNameLike(String name);
     // 1. Extend JpaRepository:
 //    - The repository extends JpaRepository<Doctor, Long>, which gives it basic CRUD functionality.
 //    - This allows the repository to perform operations like save, delete, update, and find without needing to implement these methods manually.

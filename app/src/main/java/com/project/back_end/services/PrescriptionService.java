@@ -2,13 +2,45 @@ package com.project.back_end.services;
 
 import com.project.back_end.models.Prescription;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 
+@Service
 public class PrescriptionService {
-    public boolean savePrescription(@Valid Prescription prescription) {
+
+    private final PrescriptionRepository prescriptionRepository;
+    private final TokenService tokenService;
+    public PrescriptionService(PrescriptionRepository prescriptionRepository, TokenService tokenService) {
+        this.prescriptionRepository = prescriptionRepository;
+        this.tokenService = tokenService;
     }
 
-    public Prescription getPrescription(String appointmentId) {
+    public ResponseEntity<Map<String, Object>> savePrescription(@Valid Prescription prescription, String token) {
+        try {
+            if (prescriptionRepository.existsByAppointmentId(prescription.getAppointmentId())) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Prescription already exists for this appointment"));
+            }
+            prescriptionRepository.save(prescription);
+            return ResponseEntity.status(201).body(Map.of("message", "Prescription saved successfully"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to save prescription"));
+        }
     }
+
+    public ResponseEntity<Map<String, Object>> getPrescription(Long appointmentId, String token) {
+        try {
+            var prescriptions = prescriptionRepository.findByAppointmentId(appointmentId);
+            if (prescriptions.isEmpty()) {
+                return ResponseEntity.status(404).body(Map.of("error", "No prescription found for this appointment"));
+            }
+            return ResponseEntity.ok(Map.of("prescription", prescriptions.get(0)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch prescription"));
+        }
+    }
+
 
     // 1. **Add @Service Annotation**:
 //    - The `@Service` annotation marks this class as a Spring service component, allowing Spring's container to manage it.

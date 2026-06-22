@@ -14,20 +14,16 @@ import java.util.Map;
 
 @Service
 public class Service1 {
-
     @Autowired
-    TokenService tokenService;
-
+    private final TokenService tokenService;
     @Autowired
-    DoctorRepository doctorRepository;
+    private final PatientService patientService;
     @Autowired
-    DoctorService doctorService;
-
+    private final DoctorService doctorService;
     @Autowired
-    PatientService patientService;
-
+    private final AdminRepository adminRepository;
     @Autowired
-    AdminRepository adminRepository;
+    private final DoctorRepository doctorRepository;
 
 // 1. **@Service Annotation**
 // The @Service annotation marks this class as a service component in Spring. This allows Spring to automatically detect it through component scanning
@@ -41,11 +37,10 @@ public class Service1 {
 // This method checks if the provided JWT token is valid for a specific user. It uses the TokenService to perform the validation.
 // If the token is invalid or expired, it returns a 401 Unauthorized response with an appropriate error message. This ensures security by preventing
 // unauthorized access to protected resources.
-    public boolean validateToken(String token, String user) {
-        if (tokenService.validateToken(token, user)) {
-            return true;
+void validateToken(String token, String user) {
+        if (!tokenService.validateToken(token, user)) {
+            throw new RuntimeException("Invalid or expired token");
         }
-        return false;
     }
 // 4. **validateAdmin Method**
 // This method validates the login credentials for an admin user.
@@ -58,7 +53,7 @@ public class Service1 {
 // This method ensures that only valid admin users can access secured parts of the system.
     public ResponseEntity<?> validateAdmin(String username, String password) {
         try {
-            Admin admin = adminRepository.findByUsername(username);
+            var admin = adminRepository.findByUsername(username);
             if (admin != null) {
                 if (admin.getPassword().equals(password)) {
                     String token = tokenService.generateToken(admin.getUsername());
@@ -79,24 +74,27 @@ public class Service1 {
 // - It supports various combinations of the three filters.
 // - If none of the filters are provided, it returns all available doctors.
 // This flexible filtering mechanism allows the frontend or consumers of the API to search and narrow down doctors based on user criteria.
-    public List<Doctor> filterDoctor(String name, String specialty, String timeSlot) {
-        if (name != null && specialty != null && timeSlot != null) {
-            return doctorService.filterDoctorsByNameSpecialtyTime(name, specialty, timeSlot);
+    public List<Doctor> filterDoctor(String name, String specialty, String time) {
+        if (name != null && specialty != null && time != null) {
+            return doctorService.filterDoctorsByNameSpecilityandTime(name, specialty, time).getBody().get("doctors");
         } else if (name != null && specialty != null) {
-            return doctorService.filterDoctorsByNameAndSpecialty(name, specialty);
-        } else if (name != null && timeSlot != null) {
-            return doctorService.filterDoctorsByNameAndTime(name, timeSlot);
-        } else if (specialty != null && timeSlot != null) {
-            return doctorService.filterDoctorsBySpecialtyAndTime(specialty, timeSlot);
+            return doctorService.filterDoctorByNameAndSpecility(name, specialty).getBody().get("doctors");
+        } else if (name != null && time != null) {
+            return doctorService.filterDoctorByNameAndTime(name, time).getBody().get("doctors");
+        } else if (specialty != null && time != null) {
+            return doctorService.filterDoctorsBySpecilityAndTime(specialty, time).getBody().get("doctors");
         } else if (name != null) {
-            return doctorService.filterDoctorsByName(name);
+            return doctorService.findDoctorByName(name).getBody().get("doctors");
         } else if (specialty != null) {
-            return doctorService.filterDoctorsBySpecialty(specialty);
-        } else if (timeSlot != null) {
-            return doctorService.filterDoctorsByTime(timeSlot);
+            return doctorService.filterDoctorBySpecility(specialty).getBody().get("doctors");
+        } else if (time != null) {
+            return doctorService.filterDoctorByTime(time).getBody().get("doctors");
         } else {
             return doctorService.getAllDoctors();
         }
+    }
+
+    Service1() {
     }
 // 6. **validateAppointment Method**
 // This method validates if the requested appointment time for a doctor is available.
@@ -107,27 +105,32 @@ public class Service1 {
 // - If no matching time slot is found, it returns 0 (invalid).
 // - If the doctor doesn’t exist, it returns -1.
 // This logic prevents overlapping or invalid appointment bookings.
-    public int validateAppointment(Doctor doctor, String date, String time) {
+    public int validateAppointment(Long doctorId, String date, String appointmentTime) {
+        var doctor = doctorRepository.findById(doctorId).orElse(null);
         if (doctor == null) {
             return -1; // Doctor not found
         }
-        List<String> availableTimes = doctorService.getDoctorAvailability(doctor.getId(), date);
-        for (String slot : availableTimes) {
-            String startTime = slot.split("-")[0];
-            if (startTime.equals(time)) {
+        var availableSlots = doctorService.getDoctorAvailability(doctorId, date);
+        for (var slot : availableSlots.get("availableTimes")) {
+            if (slot.get("startTime").equals(appointmentTime)) {
                 return 1; // Valid appointment time
             }
         }
         return 0; // Invalid appointment time
     }
 
+    Service1(PatientService patientService, DoctorService doctorService, TokenService tokenService, DoctorRepository doctorRepository) {
+        this.patientService = patientService;
+        this.doctorService = doctorService;
+        this.doctorRepository = doctorRepository;
+
 // 7. **validatePatient Method**
 // This method checks whether a patient with the same email or phone number already exists in the system.
 // - If a match is found, it returns false (indicating the patient is not valid for new registration).
 // - If no match is found, it returns true.
 // This helps enforce uniqueness constraints on patient records and prevent duplicate entries.
-    public boolean validatePatient(String email, String phone) {
-        return patientService.isPatientValid(email, phone);
+    public boolean validatePatient(Patient patient) {
+        return patientService.validatePatient(patient);
     }
 
 // 8. **validatePatientLogin Method**
@@ -140,7 +143,7 @@ public class Service1 {
 // This method ensures only legitimate patients can log in and access their data securely.
     public ResponseEntity<?> validatePatientLogin(String email, String password) {
         try {
-            var patient = patientService.getPatientByEmail(email);
+            var patient = patientService.findByEmail(email);
             if (patient != null) {
                 if (patient.getPassword().equals(password)) {
                     String token = tokenService.generateToken(patient.getEmail());
@@ -162,31 +165,16 @@ public class Service1 {
 // - Depending on which filters (condition, doctor name) are provided, it delegates the filtering logic to PatientService.
 // - If no filters are provided, it retrieves all appointments for the patient.
 // This flexible method supports patient-specific querying and enhances user experience on the client side.
-    public ResponseEntity<?> filterPatient(String token, String condition, String doctorName) {
-        String email = tokenService.extractEmail(token);
-        if (email == null) {
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid token"));
-        }
-        var patient = patientService.getPatientByEmail(email);
-        if (patient == null) {
-            return ResponseEntity.status(404).body(Map.of("error", "Patient not found"));
-        }
-        List<?> appointments;
+    public List<Appointment> filterPatient(String condition, String doctorName) {
+        String email = tokenService.getEmailFromToken(tokenService.getCurrentToken());
         if (condition != null && doctorName != null) {
-            appointments = patientService.filterByDoctorAndCondition(patient.getId(), doctorName, condition);
+            return patientService.filterAppointmentsByConditionAndDoctor(email, condition, doctorName);
         } else if (condition != null) {
-            appointments = patientService.filterByCondition(patient.getId(), condition);
+            return patientService.filterAppointmentsByCondition(email, condition);
         } else if (doctorName != null) {
-            appointments = patientService.filterByDoctor(patient.getId(), doctorName);
+            return patientService.filterAppointmentsByDoctor(email, doctorName);
         } else {
-            appointments = Collections.singletonList(patientService.getPatientAppointment(patient.getId()));
+            return patientService.getPatientAppointments(tokenService.getCurrentToken());
         }
-        return ResponseEntity.ok(Map.of("appointments", appointments));
-    }
-
-    public List<Doctor> filterDoctors(String name, String time, String speciality) {
-    }
-
-    public List<Appointment> filterPatientAppointments(String condition, String name, String token) {
     }
 }

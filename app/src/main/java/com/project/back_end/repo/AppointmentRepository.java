@@ -5,9 +5,23 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+    List<Appointment> findByDoctorIdAndAppointmentTimeBetween(Long doctorId, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(Long doctorId, String patientName, LocalDateTime start, LocalDateTime end);
+    @Modifying
+    @Transactional
+    void deleteAllByDoctorId(Long doctorId);
+    List<Appointment> findByPatientId(Long patientId);
+    List<Appointment> findByPatient_IdAndStatusOrderByAppointmentTimeAsc(Long patientId, int status);
+    List<Appointment> filterByDoctorNameAndPatientId(String doctorName, Long patientId);
+    List<Appointment> filterByDoctorNameAndPatientIdAndStatus(String doctorName, Long patientId, int status);
+    @Modifying
+    @Transactional
+    void updateStatus(int status, long id);
 
    // 1. Extend JpaRepository:
 //    - The repository extends JpaRepository<Appointment, Long>, which gives it basic CRUD functionality.
@@ -16,23 +30,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
 // Example: public interface AppointmentRepository extends JpaRepository<Appointment, Long> {}
 
-    java.util.List<Appointment> findByDoctorIdAndAppointmentTimeBetween(Long doctorId, java.time.LocalDateTime start, java.time.LocalDateTime end);
-    Appointment findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(Long doctorId, String patientName, java.time.LocalDateTime start, java.time.LocalDateTime end);
-
-    @Modifying
-    @Transactional
-    void deleteAllByDoctorId(Long doctorId);
-    java.util.List<Appointment> findByPatientId(Long patientId);
-
-    java.util.List<Appointment> findByPatient_IdAndStatusOrderByAppointmentTimeAsc(Long patientId, int status);
-
-    java.util.List<Appointment> filterByDoctorNameAndPatientId(String doctorName, Long patientId);
-
-    java.util.List<Appointment> filterByDoctorNameAndPatientIdAndStatus(String doctorName, Long patientId, int status);
-
-    @Modifying
-    @Transactional
-    void updateStatus(int status, long id);
 // 2. Custom Query Methods:
 
 //    - **findByDoctorIdAndAppointmentTimeBetween**:
