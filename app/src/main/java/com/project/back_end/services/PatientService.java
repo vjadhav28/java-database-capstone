@@ -165,6 +165,27 @@ public class PatientService {
         }
      }
 
+     public ResponseEntity<Map<String, Object>> getAllAppointmentsByEmail(String email) {
+         try {
+             Patient patient = patientRepository.findByEmail(email);
+             if (patient == null) {
+                 return ResponseEntity.status(404).body(Map.of("error", "Patient not found"));
+             }
+             List<Appointment> appointments = appointmentRepository.findByPatientId(patient.getId());
+             List<AppointmentDTO> appointmentDTOs = appointments.stream()
+                     .map(appointment -> new AppointmentDTO(
+                             appointment.getId(),
+                             doctorRepository.findById(appointment.getDoctorId()).orElseThrow().getName(),
+                             appointment.getDateTime(),
+                             appointment.getStatus()
+                     ))
+                     .collect(Collectors.toList());
+             return ResponseEntity.ok(Map.of("appointments", appointmentDTOs));
+         } catch (Exception e) {
+             e.printStackTrace();
+             return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch appointments"));
+         }
+     }
 // 6. **filterByDoctor Method**:
 //    - Filters appointments for a patient based on the doctor's name.
 //    - It retrieves appointments where the doctor’s name matches the given value, and the patient ID matches the provided ID.
@@ -190,15 +211,4 @@ public class PatientService {
 //    - The service uses `AppointmentDTO` to transfer appointment-related data between layers. This ensures that sensitive or unnecessary data (e.g., password or private patient information) is not exposed in the response.
 //    - Instruction: Ensure that DTOs are used appropriately to limit the exposure of internal data and only send the relevant fields to the client.
 
-
-
 }
-
-    public <__TMP__> __TMP__ filterByCondition() {
-    }
-
-    public <__TMP__> __TMP__ getAllAppointmentsByEmail() {
-    }
-
-    public <__TMP__> __TMP__ getAllAppointmentsByEmail() {
-    }
