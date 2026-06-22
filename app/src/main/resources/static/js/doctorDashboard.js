@@ -52,3 +52,27 @@
     - Call renderContent() (assumes it sets up the UI layout)
     - Call loadAppointments() to display today's appointments by default
 */
+import { getAllAppointments } from "./services/appointmentServices.js";
+import { createPatientRow } from "./components/patientRow.js";
+
+const tableBody = document.getElementById("patientTableBody");
+let selectedDate = new Date().toISOString().split("T")[0]; // Default to today's date
+const token = localStorage.getItem("token");
+let patientName = null; // Used for filtering by patient name
+
+document.getElementById("searchBar").addEventListener("input", (e) => {
+  const inputValue = e.target.value.trim();
+  patientName = inputValue !== "" ? inputValue : "null"; // Use "null" if input is empty
+  loadAppointments();
+});
+
+document.getElementById("todayBtn").addEventListener("click", () => {
+  selectedDate = new Date().toISOString().split("T")[0];
+  document.getElementById("datePicker").value = selectedDate; // Update date picker to match
+  loadAppointments();
+});
+
+document.getElementById("datePicker").addEventListener("change", (e) => {
+  selectedDate = e.target.value;
+  loadAppointments();
+}); 
