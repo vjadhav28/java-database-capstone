@@ -1,6 +1,48 @@
 package com.project.back_end.services;
 
+import com.project.back_end.DTO.AppointmentDTO;
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Patient;
+import com.project.back_end.repo.AppointmentRepository;
+import com.project.back_end.repo.DoctorRepository;
+import com.project.back_end.repo.PatientRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
 public class PatientService {
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
+    private final TokenService tokenService;
+    private final AppointmentRepository appointmentRepository;
+
+    public PatientService(PatientRepository patientRepository,
+                          DoctorRepository doctorRepository,
+                          TokenService tokenService,
+                          AppointmentRepository appointmentRepository) {
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
+        this.tokenService = tokenService;
+        this.appointmentRepository = appointmentRepository;
+    }
+
+    public boolean isPatientValid(String email, String phone) {
+        try {
+            Patient patient = getPatientByEmail(email);
+            return patient == null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Patient getPatientByEmail(String email) {
+        // Implementation for fetching patient by email
+        return patientRepository.findByEmail(email);
+    }
 // 1. **Add @Service Annotation**:
 //    - The `@Service` annotation is used to mark this class as a Spring service component. 
 //    - It will be managed by Spring's container and used for business logic related to patients and appointments.
@@ -15,12 +57,39 @@ public class PatientService {
 //    - Creates a new patient in the database. It saves the patient object using the `PatientRepository`.
 //    - If the patient is successfully saved, the method returns `1`; otherwise, it logs the error and returns `0`.
 //    - Instruction: Ensure that error handling is done properly and exceptions are caught and logged appropriately.
+    public int createPatient(Patient patient) {
+        try {
+            patientRepository.save(patient);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 
 // 4. **getPatientAppointment Method**:
 //    - Retrieves a list of appointments for a specific patient, based on their ID.
 //    - The appointments are then converted into `AppointmentDTO` objects for easier consumption by the API client.
 //    - This method is marked as `@Transactional` to ensure database consistency during the transaction.
 //    - Instruction: Ensure that appointment data is properly converted into DTOs and the method handles errors gracefully.
+    public ResponseEntity<?> getPatientAppointment(Long patientId) {
+        try {
+            List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
+            List<AppointmentDTO> appointmentDTOs = appointments.stream()
+                    .map(appointment -> new AppointmentDTO(
+                            appointment.getId(),
+                            appointment.getDoctor().getName(),
+                            appointment.getDate(),
+                            appointment.getTime(),
+                            appointment.getStatus()
+                    ))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(Map.of("appointments", appointmentDTOs));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Internal Server Error"));
+        }
+    }
 
 // 5. **filterByCondition Method**:
 //    - Filters appointments for a patient based on the condition (e.g., "past" or "future").

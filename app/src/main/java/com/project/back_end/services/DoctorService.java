@@ -1,16 +1,66 @@
 package com.project.back_end.services;
 
+import com.project.back_end.models.Doctor;
+import com.project.back_end.repo.AppointmentRepository;
+import com.project.back_end.repo.DoctorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
 public class DoctorService {
 
-// 1. **Add @Service Annotation**:
-//    - This class should be annotated with `@Service` to indicate that it is a service layer class.
-//    - The `@Service` annotation marks this class as a Spring-managed bean for business logic.
-//    - Instruction: Add `@Service` above the class declaration.
-
-// 2. **Constructor Injection for Dependencies**:
+    // 2. **Constructor Injection for Dependencies**:
 //    - The `DoctorService` class depends on `DoctorRepository`, `AppointmentRepository`, and `TokenService`.
 //    - These dependencies should be injected via the constructor for proper dependency management.
 //    - Instruction: Ensure constructor injection is used for injecting dependencies into the service.
+    private final DoctorRepository doctorRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final TokenService tokenService;
+
+    public DoctorService(DoctorRepository doctorRepository,
+                         AppointmentRepository appointmentRepository,
+                         TokenService tokenService) {
+        this.doctorRepository = doctorRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.tokenService = tokenService;
+    }}
+
+    public List<Doctor> filterDoctorsByNameSpecialtyTime(String name, String specialty, String timeSlot) {
+        return null;
+    }
+
+    public List<Doctor> filterDoctorsByNameAndSpecialty(String name, String specialty) {
+    }
+
+    public boolean checkAvailability(String doctorId, String date) {
+    }
+
+    public List<Doctor> filterDoctorsByNameAndTime(String name, String timeSlot) {
+    }
+
+    public List<Doctor> filterDoctorsBySpecialtyAndTime(String specialty, String timeSlot) {
+    }
+
+    public List<Doctor> filterDoctorsByName(String name) {
+    }
+
+    public List<Doctor> filterDoctorsBySpecialty(String specialty) {
+    }
+
+    public List<Doctor> filterDoctorsByTime(String timeSlot) {
+    }
+
+    public List<Doctor> getAllDoctors() {
+    }
+
+    @Transactional
+    public List<String> getDoctorAvailability(Long id, String date) {
+    }
+
+
 
 // 3. **Add @Transactional Annotation for Methods that Modify or Fetch Database Data**:
 //    - Methods like `getDoctorAvailability`, `getDoctors`, `findDoctorByName`, `filterDoctorsBy*` should be annotated with `@Transactional`.

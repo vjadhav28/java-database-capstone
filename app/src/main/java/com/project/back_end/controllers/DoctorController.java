@@ -1,7 +1,40 @@
 package com.project.back_end.controllers;
 
+import com.project.back_end.services.DoctorService;
+import com.project.back_end.services.Service1;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
+@RestController
+@RequestMapping("${api.path}doctor")
 public class DoctorController {
+
+    @Autowired
+    private DoctorService doctorService;
+
+    @Autowired
+    private Service1 service;
+
+    @GetMapping("/availability/{user}/{doctorId}/{date}/{token}")
+    public ResponseEntity<> getDoctorAvailability(
+            @PathVariable String user,
+            @PathVariable String doctorId,
+            @PathVariable String date,
+            @PathVariable String token) {
+        // Implementation for checking doctor availability
+         if (!service.validateToken(token, user)) {
+            return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
+        }
+        boolean isAvailable = doctorService.checkAvailability(doctorId, date);
+        return ResponseEntity.ok(Map.of("available", isAvailable));
+        return null;
+    }
 
 // 1. Set Up the Controller Class:
 //    - Annotate the class with `@RestController` to define it as a REST controller that serves JSON responses.
