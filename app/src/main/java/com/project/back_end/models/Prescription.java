@@ -8,17 +8,70 @@ public class Prescription {
 
     @Id
     private String id;
-
     private String patientName;
-
     private Long appointmentId;
-
     private String medication;
-
     private String dosage;
-
     private String doctorNotes;
 
+    public Prescription() {
+    }
+
+    public Prescription(String patientName, String medication, String dosage, String doctorNotes, Long appointmentId) {
+        this.patientName = patientName;
+        this.medication = medication;
+        this.dosage = dosage;
+        this.doctorNotes = doctorNotes;
+        this.appointmentId = appointmentId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public Long getAppointmentId() {
+        return appointmentId;
+    }
+
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
+    }
+
+    public String getMedication() {
+        return medication;
+    }
+
+    public void setMedication(String medication) {
+        this.medication = medication;
+    }
+
+    public String getDosage() {
+        return dosage;
+    }
+
+    public void setDosage(String dosage) {
+        this.dosage = dosage;
+    }
+
+    public String getDoctorNotes() {
+        return doctorNotes;
+    }
+
+    public void setDoctorNotes(String doctorNotes) {
+        this.doctorNotes = doctorNotes;
+    }
 //   @Document annotation:
 //    - Marks the class as a MongoDB document (a collection in MongoDB).
 //    - The collection name is specified as "prescriptions" to map this class to the "prescriptions" collection in MongoDB.

@@ -5,35 +5,41 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import javax.persistence.GenerationType;
 
 @Entity
 public class Patient {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @jakarta.validation.constraints.NotNull
     @Size(min = 3, max = 100)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @jakarta.validation.constraints.NotNull
     @Email
     private String email;
 
-    @Column(nullable = false)
+    @jakarta.validation.constraints.NotNull
     @Size(min = 6)
     private String password;
 
-    @Column(nullable = false)
+    @jakarta.validation.constraints.NotNull
     @Pattern(regexp = "^[0-9]{10}$")
     private String phone;
 
-    @Column(nullable = false)
+    @jakarta.validation.constraints.NotNull
     @Size(max = 255)
     private String address;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -73,14 +79,6 @@ public class Patient {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 // @Entity annotation:
 //    - Marks the class as a JPA entity, meaning it represents a table in the database.

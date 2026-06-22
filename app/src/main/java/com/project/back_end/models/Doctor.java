@@ -10,38 +10,41 @@ import java.util.List;
 
 @Entity
 public class Doctor {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
+    @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
+    @Size(min = 3, max = 50, message = "Specialty must be between 3 and 50 characters")
     private String specialty;
 
-    @Email
     @Column(nullable = false, unique = true)
+    @Email(message = "Email should be valid")
     private String email;
 
     @Column(nullable = false)
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Size(min = 6)
     private String password;
 
     @Column(nullable = false)
-    @Pattern(regexp = "\\d{10}", message = "Phone number must be 10 digits")
-    @Size(min = 3, max = 10)
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
     private String phone;
 
     @ElementCollection
-    @Column(nullable = false)
     private List<String> availableTimes;
 
+    // Getters and Setters
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -90,11 +93,6 @@ public class Doctor {
 
     public void setAvailableTimes(List<String> availableTimes) {
         this.availableTimes = availableTimes;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 // @Entity annotation:
 //    - Marks the class as a JPA entity, meaning it represents a table in the database.
 //    - Required for persistence frameworks (e.g., Hibernate) to map the class to a database table.

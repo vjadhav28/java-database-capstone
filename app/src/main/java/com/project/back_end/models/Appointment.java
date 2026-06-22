@@ -8,53 +8,35 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Appointment {
-    public Appointment(Long id, Doctor doctor, Patient patient, LocalDateTime appointmentTime, int status) {
-        this.id = id;
-        this.doctor = doctor;
-        this.patient = patient;
-        this.appointmentTime = appointmentTime;
-        this.status = status;
-    }
-
-    public Appointment() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
 
     @ManyToOne
     @NotNull(message = "Doctor cannot be null")
-    @Column(nullable = false)
     private Doctor doctor;
 
     @ManyToOne
     @NotNull(message = "Patient cannot be null")
-    @JoinColumn(name = "patient_id")
     private Patient patient;
 
     @Future(message = "Appointment time must be in the future")
     private LocalDateTime appointmentTime;
 
-    //Status of the appointment (0 for Scheduled, 1 for Completed) (required)
-    @Column(nullable = false)
-    private int status;
+    @NotNull(message = "Status cannot be null")
+    private int status; // 0 for scheduled, 1 for completed
 
-    public Appointment(Doctor doctor) {
-        this.doctor = doctor;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
+    // Getters and Setters
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
     }
 
     public void setDoctor(Doctor doctor) {

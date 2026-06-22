@@ -8,19 +8,17 @@ import jakarta.validation.constraints.NotNull;
 public class Admin {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    @NotNull(message = "username cannot be null")
+    @NotNull(message = "Username cannot be null")
     private String username;
 
-    @Column(nullable = false)
-    @NotNull(message = "password cannot be null")
+    @NotNull(message = "Password cannot be null")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -28,6 +26,7 @@ public class Admin {
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getUsername() {
         return username;
     }
