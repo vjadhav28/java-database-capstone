@@ -47,7 +47,7 @@ public class AppointmentController {
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
             @RequestParam String patientName,
             @RequestHeader String token) {
-        if (!service.validateToken(token, "doctor")) {
+        if (service.validateToken(token, "doctor")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<Appointment> appointments = appointmentService.getAppointments(date, patientName);
@@ -62,7 +62,7 @@ public class AppointmentController {
 //    - Returns success if booked, or appropriate error messages if the doctor ID is invalid or the slot is already taken.
     @PostMapping
     public ResponseEntity<Appointment> bookAppointment(@RequestBody Appointment appointment, @RequestHeader String token) {
-        if (!service.validateToken(token, "patient")) {
+        if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         try {
@@ -81,7 +81,7 @@ public class AppointmentController {
 //    - Returns an appropriate success or failure response based on the update result.
     @PutMapping
     public ResponseEntity<Appointment> updateAppointment(@RequestBody Appointment appointment, @RequestHeader String token) {
-        if (!service.validateToken(token, "patient")) {
+        if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         try {
@@ -99,7 +99,7 @@ public class AppointmentController {
 //    - Calls `AppointmentService` to handle the cancellation process and returns the result.
     @DeleteMapping("/{appointmentId}")
     public ResponseEntity<Void> cancelAppointment(@PathVariable Long appointmentId, @RequestHeader String token) {
-        if (!service.validateToken(token, "patient")) {
+        if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         try {

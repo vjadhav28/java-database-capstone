@@ -39,7 +39,7 @@ public class DoctorController {
 //    - If the token is invalid, returns an error response; otherwise, returns the availability status for the doctor.
     @GetMapping("/availability")
     public ResponseEntity<Map<String, Object>> getDoctorAvailability(@PathVariable String user, @PathVariable Long doctorId, @PathVariable String date, @PathVariable String token) {
-        if (!service.validateToken(token, user)) {
+        if (service.validateToken(token, user)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         Map<String, Object> availability = doctorService.getDoctorAvailability(doctorId, date);
@@ -62,7 +62,7 @@ public class DoctorController {
 //    - If the doctor already exists, returns a conflict response; otherwise, adds the doctor and returns a success message.
     @PostMapping
     public ResponseEntity<Map<String, Object>> saveDoctor(@RequestBody @Valid Doctor doctor, @RequestHeader String token) {
-        if (!service.validateToken(token, "admin")) {
+        if (service.validateToken(token, "admin")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         boolean isSaved = doctorService.saveDoctor(doctor);
@@ -93,7 +93,7 @@ public class DoctorController {
 //    - If the doctor exists, updates the record and returns success; otherwise, returns not found or error messages.
     @PutMapping
     public ResponseEntity<Map<String, Object>> updateDoctor(@RequestBody @Valid Doctor doctor, @RequestHeader String token) {
-        if (!service.validateToken(token, "admin")) {
+        if (service.validateToken(token, "admin")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         boolean isUpdated = doctorService.updateDoctor(doctor);
@@ -110,7 +110,7 @@ public class DoctorController {
 //    - If the doctor exists, deletes the record and returns a success message; otherwise, responds with a not found or error message.
     @DeleteMapping("/{doctorId}")
     public ResponseEntity<Map<String, Object>> deleteDoctor(@PathVariable Long doctorId, @RequestHeader String token) {
-        if (!service.validateToken(token, "admin")) {
+        if (service.validateToken(token, "admin")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         boolean isDeleted = doctorService.deleteDoctor(doctorId);

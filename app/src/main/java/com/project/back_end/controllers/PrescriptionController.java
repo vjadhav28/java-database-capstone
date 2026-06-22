@@ -42,7 +42,7 @@ public class PrescriptionController {
 //    - Delegates the saving logic to `PrescriptionService` and returns a response indicating success or failure.
     @PostMapping
     public ResponseEntity<Map<String, Object>> savePrescription(@RequestBody @Valid Prescription prescription, @RequestHeader String token) {
-        if (!service.validateToken(token, "doctor")) {
+        if (service.validateToken(token, "doctor")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         boolean isSaved = prescriptionService.savePrescription(prescription);
@@ -61,7 +61,7 @@ public class PrescriptionController {
 //    - Returns the prescription details or an appropriate error message if validation fails.
     @GetMapping("/appointment/{appointmentId}")
     public ResponseEntity<Map<String, Object>> getPrescription(@PathVariable String appointmentId, @RequestHeader String token) {
-        if (!service.validateToken(token, "doctor")) {
+        if (service.validateToken(token, "doctor")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         Prescription prescription = prescriptionService.getPrescription(appointmentId);

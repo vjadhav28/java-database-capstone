@@ -38,7 +38,7 @@ public class PatientController {
 //    - If the token is valid, returns patient information; otherwise, returns an appropriate error message.
     @GetMapping
     public ResponseEntity<Map<String, Object>> getPatient(@RequestHeader String token) {
-        if (!service.validateToken(token, "patient")) {
+        if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         Patient patient = patientService.getPatient(token);
@@ -52,7 +52,7 @@ public class PatientController {
 //    - If validation passes, attempts to create the patient and returns success or error messages based on the outcome.
     @PostMapping
     public ResponseEntity<Map<String, Object>> createPatient(@RequestBody @Valid Patient patient, @RequestHeader String token) {
-        if (!service.validateToken(token, "patient")) {
+        if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         boolean isCreated = patientService.createPatient(patient);
@@ -84,7 +84,7 @@ public class PatientController {
 //    - If valid, retrieves the patient's appointment data from `PatientService`; otherwise, returns a validation error.
     @GetMapping("/appointment")
     public ResponseEntity<Map<String, Object>> getPatientAppointment(@RequestHeader String token) {
-        if (!service.validateToken(token, "patient")) {
+        if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         List<Appointment> appointments = patientService.getPatientAppointments(token);
@@ -101,7 +101,7 @@ public class PatientController {
             @RequestParam(required = false) String condition,
             @RequestParam(required = false) String name,
             @RequestHeader String token) {
-        if (!service.validateToken(token, "patient")) {
+        if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
         List<Appointment> filteredAppointments = service.filterPatientAppointments(condition, name, token);
