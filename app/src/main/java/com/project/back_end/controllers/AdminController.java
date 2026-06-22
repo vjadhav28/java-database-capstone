@@ -1,6 +1,17 @@
 
 package com.project.back_end.controllers;
 
+import com.project.back_end.models.Admin;
+import com.project.back_end.services.Service1;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("${api.path}admin")
 public class AdminController {
 
 // 1. Set Up the Controller Class:
@@ -9,19 +20,23 @@ public class AdminController {
 //    - This allows the use of an external property (`api.path`) for flexible configuration of endpoint paths.
 
 
-// 2. Autowire Service Dependency:
+    // 2. Autowire Service Dependency:
 //    - Use constructor injection to autowire the `Service` class.
 //    - The service handles core logic related to admin validation and token checking.
 //    - This promotes cleaner code and separation of concerns between the controller and business logic layer.
+    private final Service1 service;
 
+    public AdminController(Service1 service, Service1 service1) {
+        this.service = service1;
+    }
 
-// 3. Define the `adminLogin` Method:
+    // 3. Define the `adminLogin` Method:
 //    - Handles HTTP POST requests for admin login functionality.
 //    - Accepts an `Admin` object in the request body, which contains login credentials.
 //    - Delegates authentication logic to the `validateAdmin` method in the service layer.
 //    - Returns a `ResponseEntity` with a `Map` containing login status or messages.
-
-
-
+    public ResponseEntity<Map<String, Object>> adminLogin(@RequestBody Admin admin) {
+        return (ResponseEntity<Map<String, Object>>) service.validateAdmin(admin.getUsername(), admin.getPassword());
+    }
 }
 

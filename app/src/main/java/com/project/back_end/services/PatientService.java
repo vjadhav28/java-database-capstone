@@ -57,7 +57,7 @@ public class PatientService {
 //    - Creates a new patient in the database. It saves the patient object using the `PatientRepository`.
 //    - If the patient is successfully saved, the method returns `1`; otherwise, it logs the error and returns `0`.
 //    - Instruction: Ensure that error handling is done properly and exceptions are caught and logged appropriately.
-    public int createPatient(Patient patient) {
+    public boolean createPatient(Patient patient) {
         try {
             patientRepository.save(patient);
             return 1;
@@ -89,6 +89,16 @@ public class PatientService {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("error", "Internal Server Error"));
         }
+    }
+
+    public List<?> filterByDoctor(Long id, String doctorName) {
+
+    }
+
+    public Patient getPatient(String token) {
+    }
+
+    public List<Appointment> getPatientAppointments(String token) {
     }
 
 // 5. **filterByCondition Method**:

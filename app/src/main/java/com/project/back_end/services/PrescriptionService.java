@@ -1,8 +1,16 @@
 package com.project.back_end.services;
 
+import com.project.back_end.models.Prescription;
+import jakarta.validation.Valid;
+
 public class PrescriptionService {
-    
- // 1. **Add @Service Annotation**:
+    public boolean savePrescription(@Valid Prescription prescription) {
+    }
+
+    public Prescription getPrescription(String appointmentId) {
+    }
+
+    // 1. **Add @Service Annotation**:
 //    - The `@Service` annotation marks this class as a Spring service component, allowing Spring's container to manage it.
 //    - This class contains the business logic related to managing prescriptions in the healthcare system.
 //    - Instruction: Ensure the `@Service` annotation is applied to mark this class as a Spring-managed service.

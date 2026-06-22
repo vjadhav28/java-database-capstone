@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -178,9 +179,14 @@ public class Service1 {
         } else if (doctorName != null) {
             appointments = patientService.filterByDoctor(patient.getId(), doctorName);
         } else {
-            appointments = patientService.getPatientAppointment(patient.getId());
+            appointments = Collections.singletonList(patientService.getPatientAppointment(patient.getId()));
         }
         return ResponseEntity.ok(Map.of("appointments", appointments));
     }
 
+    public List<Doctor> filterDoctors(String name, String time, String speciality) {
+    }
+
+    public List<Appointment> filterPatientAppointments(String condition, String name, String token) {
+    }
 }

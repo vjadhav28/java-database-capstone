@@ -26,38 +26,47 @@ public class DoctorService {
         this.doctorRepository = doctorRepository;
         this.appointmentRepository = appointmentRepository;
         this.tokenService = tokenService;
-    }}
+    }
 
     public List<Doctor> filterDoctorsByNameSpecialtyTime(String name, String specialty, String timeSlot) {
         return null;
     }
 
     public List<Doctor> filterDoctorsByNameAndSpecialty(String name, String specialty) {
+        return List.of();
     }
 
     public boolean checkAvailability(String doctorId, String date) {
+        return false;
     }
 
     public List<Doctor> filterDoctorsByNameAndTime(String name, String timeSlot) {
+        return List.of();
     }
 
     public List<Doctor> filterDoctorsBySpecialtyAndTime(String specialty, String timeSlot) {
+        return List.of();
     }
 
     public List<Doctor> filterDoctorsByName(String name) {
+        return List.of();
     }
 
     public List<Doctor> filterDoctorsBySpecialty(String specialty) {
+        return List.of();
     }
 
     public List<Doctor> filterDoctorsByTime(String timeSlot) {
+        return List.of();
     }
 
     public List<Doctor> getAllDoctors() {
+        return List.of();
     }
 
     @Transactional
     public List<String> getDoctorAvailability(Long id, String date) {
+        return List.of();
     }
 
 

@@ -1,6 +1,26 @@
 package com.project.back_end.services;
 
+import com.project.back_end.models.Appointment;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
 public class AppointmentService {
+    public List<Appointment> getAppointments(LocalDate date, String patientName) {
+        // Implementation for fetching appointments
+        return null;
+    }
+
+    public Appointment bookAppointment(Appointment appointment) {
+    }
+
+    public Appointment updateAppointment(Appointment appointment) {
+    }
+
+    public void cancelAppointment(Long appointmentId) {
+    }
 // 1. **Add @Service Annotation**:
 //    - To indicate that this class is a service layer class for handling business logic.
 //    - The `@Service` annotation should be added before the class declaration to mark it as a Spring service component.
