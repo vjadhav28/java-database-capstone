@@ -6,6 +6,7 @@ import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -67,6 +68,8 @@ public class AppointmentService {
             if (existingAppointment == null) {
                 return "Appointment not found";
             }
+        }
+    }
 // 6. **Cancel Appointment Method**:
 //    - This method cancels an appointment by deleting it from the database.
 //    - It ensures the patient who owns the appointment is trying to cancel it and handles possible errors.

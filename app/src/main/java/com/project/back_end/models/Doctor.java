@@ -152,5 +152,6 @@ public class Doctor {
 // 8. Getters and Setters:
 //    - Standard getter and setter methods are provided for all fields: id, name, specialty, email, password, phone, and availableTimes.
 
+    }
 }
 
