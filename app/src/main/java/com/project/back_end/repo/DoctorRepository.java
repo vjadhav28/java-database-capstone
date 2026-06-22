@@ -13,6 +13,22 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     List<Doctor> findByNameLike(String name);
     List<Doctor> findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(String name, String specialty);
     List<Doctor> findBySpecialtyIgnoreCase(String specialty);
+
+    List<Doctor> findByName(String name);
+
+    List<Doctor> findBySpecialty(String specialty);
+
+    List<Doctor> findByAvailableTime(String time);
+
+    List<Doctor> findBySpecialtyAndTime(String specialty, String time);
+
+    List<Doctor> findByNameAndTime(String name, String time);
+
+    List<Doctor> findByNameAndSpecialty(String name, String specialty);
+
+    List<Doctor> findByNameAndSpecialtyAndTime(String name, String specialty, String time);
+
+    Doctor findByPhone(String phone);
     // 1. Extend JpaRepository:
 //    - The repository extends JpaRepository<Doctor, Long>, which gives it basic CRUD functionality.
 //    - This allows the repository to perform operations like save, delete, update, and find without needing to implement these methods manually.

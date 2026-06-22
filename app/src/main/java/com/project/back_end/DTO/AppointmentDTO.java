@@ -31,6 +31,9 @@ public class AppointmentDTO {
         this.endTime = appointmentTime.plusHours(1);
     }
 
+    public AppointmentDTO(Long id, String name, Object dateTime, int status) {
+    }
+
     // Getters
     public Long getId() {
         return id;

@@ -23,7 +23,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Transactional
     void updateStatus(int status, long id);
 
-   // 1. Extend JpaRepository:
+    List<Appointment> findByPatientIdAndDoctorName(Long patientId, String doctorName);
+
+    List<Appointment> findByPatientIdAndDoctorNameAndStatus(Long patientId, String doctorName, int status);
+
+    List<Appointment> findByPatientIdAndStatus(Long patientId, int status);
+
+    // 1. Extend JpaRepository:
 //    - The repository extends JpaRepository<Appointment, Long>, which gives it basic CRUD functionality.
 //    - The methods such as save, delete, update, and find are inherited without the need for explicit implementation.
 //    - JpaRepository also includes pagination and sorting features.

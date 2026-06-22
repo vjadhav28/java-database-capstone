@@ -8,6 +8,7 @@ import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class PatientService {
                             appointment.getDateTime(),
                             appointment.getStatus()
                     ))
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(Map.of("appointments", appointmentDTOs));
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +96,7 @@ public class PatientService {
                              appointment.getDateTime(),
                              appointment.getStatus()
                      ))
-                     .collect(Collectors.toList());
+                     .toList();
              return ResponseEntity.ok(Map.of("appointments", appointmentDTOs));
          } catch (Exception e) {
              e.printStackTrace();
@@ -130,11 +131,13 @@ public class PatientService {
       }
 
      public ResponseEntity<Map<String, Object>> getPatientDetails(String token) {
-        String email = tokenService.extractEmailFromToken(token);
-        Patient patient = patientRepository.findByEmail(email);
-        if (patient == null) {
-            return ResponseEntity.status(404).body(Map.of("error", "Patient not found"));
-        }
+         String email = tokenService.extractEmailFromToken(token);
+         Patient patient = patientRepository.findByEmail(email);
+         if (patient == null) {
+             return ResponseEntity.status(404).body(Map.of("error", "Patient not found"));
+         }
+         return ResponseEntity.ok(Map.of("patient", patient));
+     }
 
     @Transactional
     public ResponseEntity<Map<String, Object>> filterByCondition(Long patientId, String condition) {
@@ -162,13 +165,6 @@ public class PatientService {
         }
      }
 
-    public ResponseEntity<Map<String, Object>> getPatientDetails(String token) {
-        String email = tokenService.extractEmailFromToken(token);
-        Patient patient = patientRepository.findByEmail(email);
-        if (patient == null) {
-            return ResponseEntity.status(404).body(Map.of("error", "Patient not found"));
-        }
-        return ResponseEntity.ok(Map.of("patient", patient));
 // 6. **filterByDoctor Method**:
 //    - Filters appointments for a patient based on the doctor's name.
 //    - It retrieves appointments where the doctor’s name matches the given value, and the patient ID matches the provided ID.
@@ -197,3 +193,12 @@ public class PatientService {
 
 
 }
+
+    public <__TMP__> __TMP__ filterByCondition() {
+    }
+
+    public <__TMP__> __TMP__ getAllAppointmentsByEmail() {
+    }
+
+    public <__TMP__> __TMP__ getAllAppointmentsByEmail() {
+    }

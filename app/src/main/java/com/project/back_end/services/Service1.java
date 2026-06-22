@@ -15,6 +15,7 @@ public class Service1 {
     private final TokenService tokenService;
    private final AdminRepository adminRepository;
     private DoctorRepository doctorRepository;
+    PatientService patientService;
 
     public Service1(TokenService tokenService, AdminRepository adminRepository, DoctorRepository doctorRepository) {
         this.tokenService = tokenService;
@@ -161,13 +162,10 @@ public class Service1 {
         if (condition != null && name == null) {
             return ResponseEntity.ok(Map.of("appointments", patientService.filterByCondition(condition, email)));
         }
-        if (condition == null && name != null) {
-            return ResponseEntity.ok(Map.of("appointments", patientService.filterByDoctor(name, email)));
+        if (condition == null) {
+            return ResponseEntity.ok(Map.of("appointments", patientService.filterByDoctor(Long.valueOf(name), email)));
         }
-        if (condition != null && name != null) {
-            return ResponseEntity.ok(Map.of("appointments", patientService.filterByDoctorAndCondition(condition, name, email)));
-        }
-        return ResponseEntity.status(400).body(Map.of("error", "Invalid filter parameters"));
+        return ResponseEntity.ok(Map.of("appointments", patientService.filterByDoctorAndCondition(Long.valueOf(condition), name, email)));
     }
     public ResponseEntity<Map<String, Object>> filterDoctor(String name, String specialty, String time) {
         if (name == null && specialty == null && time == null) {
