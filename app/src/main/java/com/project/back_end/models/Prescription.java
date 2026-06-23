@@ -1,20 +1,29 @@
 package com.project.back_end.models;
 
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "prescriptions")
 public class Prescription {
 
+    private String dosage;
     @Id
     private String id;
+    @NotNull
+    @Size(min = 3, max = 100)
     private String patientName;
+    @NotNull
     private Long appointmentId;
+    @NotNull
+    @Size(min = 3, max = 100)
     private String medication;
-    private String dosage;
+    @Size(max = 200)
     private String doctorNotes;
 
-    public Prescription() {
+    public Prescription(String dosage) {
+        this.dosage = dosage;
     }
 
     public Prescription(String patientName, String medication, String dosage, String doctorNotes, Long appointmentId) {

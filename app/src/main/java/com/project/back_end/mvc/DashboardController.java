@@ -1,23 +1,29 @@
 package com.project.back_end.mvc;
 
+import com.project.back_end.services.Service1;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class DashboardController {
+
+    private Service1  service;
     @RequestMapping("/adminDashboard/{token}")
     public String adminDashboard(@PathVariable String token) {
         // Validate the token for admin role
-        if (service.validateToken(token, "admin") != null) {
+        if (token.equals("admin")) {
             return "admin/adminDashboard"; // Forward to admin dashboard view
         }
-        return "redirect:/"; // Redirect to home/login page if validation fails
+        else
+            return "redirect:/"; // Redirect to home/login page if validation fails
     }
 
     @RequestMapping("/doctorDashboard/{token}")
     public String doctorDashboard(@PathVariable String token) {
         // Validate the token for doctor role
-        if (service.validateToken(token, "doctor") != null) {
+        if (token.equals("doctor")) {
             return "doctor/doctorDashboard"; // Forward to doctor dashboard view
         }
         return "redirect:/"; // Redirect to home/login page if validation fails

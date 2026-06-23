@@ -1,6 +1,5 @@
 package com.project.back_end.controllers;
 
-import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Patient;
 import com.project.back_end.services.PatientService;
@@ -69,8 +68,8 @@ public class PatientController {
 //    - Delegates authentication to the `validatePatientLogin` method in the shared service.
 //    - Returns a response with a token or an error message depending on login success.
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody @Valid Login login) {
-        Map<String, Object> response = (Map<String, Object>) service.validatePatientLogin(login);
+    public ResponseEntity<Map<String, Object>> login() {
+        Map<String, Object> response = service.validatePatientLogin(login().toString()).getBody();
         if (response.containsKey("error")) {
             return ResponseEntity.status(401).body(response);
         }
@@ -104,7 +103,7 @@ public class PatientController {
         if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
-        List<Appointment> filteredAppointments = service.filterPatientAppointments(condition, name, token);
+        List<Appointment> filteredAppointments = (List<Appointment>) service.filterPatient(condition, name, token);
         return ResponseEntity.ok(Map.of("appointments", filteredAppointments));
     }
 }

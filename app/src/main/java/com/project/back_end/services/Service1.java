@@ -3,7 +3,6 @@ package com.project.back_end.services;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.repo.AdminRepository;
 import com.project.back_end.repo.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,7 @@ public class Service1 {
    private final AdminRepository adminRepository;
     private DoctorRepository doctorRepository;
     PatientService patientService;
+    private String password;
 
     public Service1(TokenService tokenService, AdminRepository adminRepository, DoctorRepository doctorRepository) {
         this.tokenService = tokenService;
@@ -28,11 +28,11 @@ public class Service1 {
     //    - It uses the `TokenService` to check the validity of the token.
     //    - If the token is invalid or expired, it returns a 401 Unauthorized response with an appropriate error message.
     //    - This method is crucial for securing endpoints and ensuring that only authenticated users can access protected resources.
-    public ResponseEntity<Map<String, Object>> validateToken(String token, String userType) {
+    public boolean validateToken(String token, String userType) {
         if (!tokenService.validateToken(token, userType)) {
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token")).hasBody();
         }
-        return ResponseEntity.ok(Map.of("message", "Token is valid"));
+        return ResponseEntity.ok(Map.of("message", "Token is valid")).hasBody();
     }
 
     // 2. **validateAdmin Method**:
@@ -130,7 +130,7 @@ public class Service1 {
 // - If the password is incorrect or the patient doesn't exist, it returns a 401 Unauthorized with a relevant error.
 // - If an exception occurs, it returns a 500 Internal Server Error.
 // This method ensures only legitimate patients can log in and access their data securely.
-    public ResponseEntity<Map<String, Object>> validatePatientLogin(String email, String password) {
+    public ResponseEntity<Map<String, Object>> validatePatientLogin(String email) {
         try {
             var patient = doctorRepository.findByEmail(email);
             if (patient != null) {
@@ -148,24 +148,15 @@ public class Service1 {
             return ResponseEntity.status(500).body(Map.of("error", "An error occurred during patient login validation"));
         }
     }
-// 9. **filterPatient Method**
+
+    // 9. **filterPatient Method**
 // This method filters a patient's appointment history based on condition and doctor name.
 // - It extracts the email from the JWT token to identify the patient.
 // - Depending on which filters (condition, doctor name) are provided, it delegates the filtering logic to PatientService.
 // - If no filters are provided, it retrieves all appointments for the patient.
 // This flexible method supports patient-specific querying and enhances user experience on the client side.
     public ResponseEntity<Map<String, Object>> filterPatient(String condition, String name, String token) {
-        String email = tokenService.extractEmailFromToken(token);
-        if (condition == null && name == null) {
-            return ResponseEntity.ok(Map.of("appointments", patientService.getAllAppointmentsByEmail(email)));
-        }
-        if (condition != null && name == null) {
-            return ResponseEntity.ok(Map.of("appointments", patientService.filterByCondition(condition, email)));
-        }
-        if (condition == null) {
-            return ResponseEntity.ok(Map.of("appointments", patientService.filterByDoctor(Long.valueOf(name), email)));
-        }
-        return ResponseEntity.ok(Map.of("appointments", patientService.filterByDoctorAndCondition(Long.valueOf(condition), name, email)));
+        return null;
     }
     public ResponseEntity<Map<String, Object>> filterDoctor(String name, String specialty, String time) {
         if (name == null && specialty == null && time == null) {
@@ -210,5 +201,4 @@ public class Service1 {
         }
         return ResponseEntity.ok(Map.of("isValid", 0));
     }
-
 }

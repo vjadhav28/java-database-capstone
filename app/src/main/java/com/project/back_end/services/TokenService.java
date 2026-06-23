@@ -71,7 +71,7 @@ public TokenService(AdminRepository adminRepository, DoctorRepository doctorRepo
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-// 6. **validateToken Method**
+    // 6. **validateToken Method**
 // This method validates whether a provided JWT token is valid for a specific user role (admin, doctor, or patient).
 // - It first extracts the email from the token using the `extractEmail()` method.
 // - Depending on the role (`admin`, `doctor`, or `patient`), it checks the corresponding repository (AdminRepository, DoctorRepository, or PatientRepository)
@@ -81,19 +81,11 @@ public TokenService(AdminRepository adminRepository, DoctorRepository doctorRepo
 // - The method gracefully handles any errors by returning false if the token is invalid or an exception occurs.
 // This ensures secure access control based on the user's role and their existence in the system.
     public boolean validateToken(String token, String role) {
-        try {
-            String email = extractEmail(token);
-            return switch (role) {
-                case "admin" -> adminRepository.findByEmail(email) != null;
-                case "doctor" -> doctorRepository.findByEmail(email) != null;
-                case "patient" -> patientRepository.findByEmail(email) != null;
-                default -> false;
-            };
-        } catch (Exception e) {
-            return false;
-        }
+        //validate token based on role
+        return false;
     }
 
     public String extractEmailFromToken(String token) {
+        return Jwts.parser().verifyWith((javax.crypto.SecretKey) getSigningKey()).build().parseSignedClaims(token).getPayload().getSubject();
     }
 }

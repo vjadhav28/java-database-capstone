@@ -1,8 +1,11 @@
 package com.project.back_end.services;
 
 import com.project.back_end.models.Prescription;
+import com.project.back_end.repo.PrescriptionRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import java.util.Map;
 
 @Service
@@ -10,12 +13,14 @@ public class PrescriptionService {
 
     private final PrescriptionRepository prescriptionRepository;
     private final TokenService tokenService;
+    private Long appointmentId;
+
     public PrescriptionService(PrescriptionRepository prescriptionRepository, TokenService tokenService) {
         this.prescriptionRepository = prescriptionRepository;
         this.tokenService = tokenService;
     }
 
-    public ResponseEntity<Map<String, Object>> savePrescription(@Valid Prescription prescription, String token) {
+    public ResponseEntity<Map<String, Object>> savePrescription(@Valid Prescription prescription) {
         try {
             if (prescriptionRepository.existsByAppointmentId(prescription.getAppointmentId())) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Prescription already exists for this appointment"));
@@ -28,16 +33,16 @@ public class PrescriptionService {
         }
     }
 
-    public ResponseEntity<Map<String, Object>> getPrescription(Long appointmentId, String token) {
+    public ResponseEntity<Map<String, Prescription>> getPrescription(String token) {
         try {
             var prescriptions = prescriptionRepository.findByAppointmentId(appointmentId);
             if (prescriptions.isEmpty()) {
-                return ResponseEntity.status(404).body(Map.of("error", "No prescription found for this appointment"));
+                return ResponseEntity.status(404).body(Map.<String, Prescription>of());
             }
             return ResponseEntity.ok(Map.of("prescription", prescriptions.get(0)));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch prescription"));
+            return ResponseEntity.status(500).body(Map.<String, Prescription>of());
         }
     }
 

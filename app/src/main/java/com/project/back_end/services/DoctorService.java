@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DoctorService {
@@ -23,6 +24,7 @@ public class DoctorService {
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
     private final TokenService tokenService;
+    private DoctorService doctorService;
 
     @Autowired
     public DoctorService(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, TokenService tokenService) {
@@ -42,7 +44,7 @@ public class DoctorService {
 //    - The method fetches all appointments for the doctor on the given date and calculates the availability by comparing against booked slots.
 //    - Instruction: Ensure that the time slots are properly formatted and the available slots are correctly filtered.
     @Transactional
-    public ResponseEntity<Map<String, Object>> getDoctorAvailability(Long doctorId, LocalDate date) {
+    public ResponseEntity<Map<String, Object>> getDoctorAvailability(Long doctorId, LocalDate date, Object availableSlots) {
         try {
             List<Appointment> bookedAppointments = appointmentRepository.findByDoctorIdAndDate(doctorId, date);
             // Logic to calculate available slots
@@ -57,32 +59,32 @@ public class DoctorService {
 //    - Used to save a new doctor record in the database after checking if a doctor with the same email already exists.
 //    - If a doctor with the same email is found, it returns `-1` to indicate conflict; `1` for success, and `0` for internal errors.
 //    - Instruction: Ensure that the method correctly handles conflicts and exceptions when saving a doctor.
-    public int saveDoctor(Doctor doctor) {
+    public boolean saveDoctor(Doctor doctor) {
         try {
             if (doctorRepository.findByEmail(doctor.getEmail()) != null) {
-                return -1; // Doctor with the same email already exists
+                return false; // Doctor with the same email already exists
             }
             doctorRepository.save(doctor);
-            return 1; // Doctor saved successfully
+            return true; // Doctor saved successfully
         } catch (Exception e) {
             e.printStackTrace();
-            return 0; // Internal error occurred
+            return false; // Internal error occurred
         }
     }
 
     // 6. **updateDoctor Method**:
 //    - Updates an existing doctor's details in the database. If the doctor doesn't exist, it returns `-1`.
 //    - Instruction: Make sure that the doctor exists before attempting to save the updated record and handle any errors properly.
-    public int updateDoctor(Doctor doctor) {
+    public boolean updateDoctor(Doctor doctor) {
         try {
             if (!doctorRepository.existsById(doctor.getId())) {
-                return -1; // Doctor not found
+                return false; // Doctor not found
             }
             doctorRepository.save(doctor);
-            return 1; // Doctor updated successfully
+            return true; // Doctor updated successfully
         } catch (Exception e) {
             e.printStackTrace();
-            return 0; // Internal error occurred
+            return false; // Internal error occurred
         }
     }
 
@@ -104,17 +106,17 @@ public class DoctorService {
 //    - Deletes a doctor from the system along with all appointments associated with that doctor.
 //    - It first checks if the doctor exists. If not, it returns `-1`; otherwise, it deletes the doctor and their appointments.
 //    - Instruction: Ensure the doctor and their appointments are deleted properly, with error handling for internal issues.
-    public int deleteDoctor(Long id) {
+    public boolean deleteDoctor(Long id) {
         try {
             if (!doctorRepository.existsById(id)) {
-                return -1; // Doctor not found
+                return false; // Doctor not found
             }
             appointmentRepository.deleteByDoctorId(id); // Delete associated appointments
             doctorRepository.deleteById(id); // Delete the doctor
-            return 1; // Doctor deleted successfully
+            return true; // Doctor deleted successfully
         } catch (Exception e) {
             e.printStackTrace();
-            return 0; // Internal error occurred
+            return false; // Internal error occurred
         }
     }
 
@@ -128,7 +130,7 @@ public class DoctorService {
             if (doctor == null || !doctor.getPassword().equals(login.getPassword())) {
                 return Map.of("error", "Invalid email or password");
             }
-            String token = tokenService.generateToken(doctor.getId(), "doctor");
+            String token = tokenService.generateToken(String.valueOf(doctor.getId()), "doctor");
             return Map.of("message", "Login successful", "token", token);
         } catch (Exception e) {
             e.printStackTrace();
@@ -262,5 +264,13 @@ public class DoctorService {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("error", "Failed to filter doctors by time"));
         }
+    }
+
+    public List<Doctor> getAllDoctors() {
+        return doctorRepository.findAll();
+    }
+
+    public Map<String, Object> doctorLogin(Login login) {
+        return doctorService.validateDoctor(login);
     }
 }

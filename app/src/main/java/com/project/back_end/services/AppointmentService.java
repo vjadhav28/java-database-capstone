@@ -14,13 +14,14 @@ import java.util.List;
 @Service
 public class AppointmentService {
 
-    private final AppointmentRepository appointmentRepository;
-    private final Service service;
-    private final TokenService tokenService;
-    private final PatientRepository patientRepository;
-    private final DoctorRepository doctorRepository;
+    private AppointmentRepository appointmentRepository;
+    private Service1 service;
+    private TokenService tokenService;
+    private PatientRepository patientRepository;
+    private DoctorRepository doctorRepository;
+    private Long doctorId;
 
-    public AppointmentService(AppointmentRepository appointmentRepository, Service service, TokenService tokenService, PatientRepository patientRepository, DoctorRepository doctorRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, Service1 service, TokenService tokenService, PatientRepository patientRepository, DoctorRepository doctorRepository) {
         this.appointmentRepository = appointmentRepository;
         this.service = service;
         this.tokenService = tokenService;
@@ -61,35 +62,14 @@ public class AppointmentService {
 //    - It validates whether the patient ID matches, checks if the appointment is available for updating, and ensures that the doctor is available at the specified time.
 //    - If the update is successful, it saves the appointment; otherwise, it returns an appropriate error message.
 //    - Instruction: Ensure proper validation and error handling is included for appointment updates.
-    @Transactional
-    public String updateAppointment(Long appointmentId, Appointment updatedAppointment) {
-        try {
-            var existingAppointment = appointmentRepository.findById(appointmentId).orElse(null);
-            if (existingAppointment == null) {
-                return "Appointment not found";
-            }
-        }
-    }
-// 6. **Cancel Appointment Method**:
+
+    // 6. **Cancel Appointment Method**:
 //    - This method cancels an appointment by deleting it from the database.
 //    - It ensures the patient who owns the appointment is trying to cancel it and handles possible errors.
 //    - Instruction: Make sure that the method checks for the patient ID match before deleting the appointment.
     @Transactional
-    public String cancelAppointment(Long appointmentId, Long patientId) {
-        try {
-            var existingAppointment = appointmentRepository.findById(appointmentId).orElse(null);
-            if (existingAppointment == null) {
-                return "Appointment not found";
-            }
-            if (!existingAppointment.getPatient().getId().equals(patientId)) {
-                return "Unauthorized to cancel this appointment";
-            }
-            appointmentRepository.delete(existingAppointment);
-            return "Appointment cancelled successfully";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Failed to cancel appointment";
-        }
+    public String cancelAppointment(Long appointmentId) {
+        return null;
     }
 // 7. **Get Appointments Method**:
 //    - This method retrieves a list of appointments for a specific doctor on a particular day, optionally filtered by the patient's name.
@@ -97,17 +77,7 @@ public class AppointmentService {
 //    - Instruction: Ensure the correct use of transaction boundaries, especially when querying the database for appointments.
     @Transactional
     public List<Appointment> getAppointments(LocalDate date, String patientName) {
-        try {
-            var doctorId = service.getDoctorIdFromToken(tokenService.getCurrentToken());
-            if (patientName == null || patientName.isEmpty()) {
-                return appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, date.atStartOfDay(), date.plusDays(1).atStartOfDay());
-            } else {
-                return appointmentRepository.findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(doctorId, patientName, date.atStartOfDay(), date.plusDays(1).atStartOfDay());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of(); // Return an empty list in case of error
-        }
+        return appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, date.atStartOfDay(), date.atStartOfDay().plusDays(1));
     }
 // 8. **Change Status Method**:
 //    - This method updates the status of an appointment by changing its value in the database.
@@ -124,4 +94,7 @@ public class AppointmentService {
         }
     }
 
+    public Appointment updateAppointment(Appointment appointment) {
+        return appointmentRepository.save(appointment);
+    }
 }

@@ -40,14 +40,13 @@ public class PatientService {
 //    - The `PatientService` class has dependencies on `PatientRepository`, `AppointmentRepository`, and `TokenService`.
 //    - These dependencies are injected via the constructor to maintain good practices of dependency injection and testing.
 //    - Instruction: Ensure constructor injection is used for all the required dependencies.
-    public int createPatient(Patient patient) {
+    public boolean createPatient(Patient patient) {
         try {
             patientRepository.save(patient);
-            return 1;
         } catch (Exception e) {
             e.printStackTrace();
-            return 0;
         }
+        return false;
     }
 
 // 3. **createPatient Method**:
@@ -186,6 +185,15 @@ public class PatientService {
              return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch appointments"));
          }
      }
+
+    public Patient getPatient(String token) {
+        String email = tokenService.extractEmailFromToken(token);
+        return patientRepository.findByEmail(email);
+    }
+
+    public List<Appointment> getPatientAppointments(String token) {
+        return appointmentRepository.findByPatientId(getPatient(token).getId());    
+    }
 // 6. **filterByDoctor Method**:
 //    - Filters appointments for a patient based on the doctor's name.
 //    - It retrieves appointments where the doctor’s name matches the given value, and the patient ID matches the provided ID.

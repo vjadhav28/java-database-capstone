@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,6 +30,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByPatientIdAndDoctorNameAndStatus(Long patientId, String doctorName, int status);
 
     List<Appointment> findByPatientIdAndStatus(Long patientId, int status);
+
+    List<Appointment> findByDoctorIdAndDate(Long doctorId, LocalDate date);
+
+    void deleteByDoctorId(Long id);
 
     // 1. Extend JpaRepository:
 //    - The repository extends JpaRepository<Appointment, Long>, which gives it basic CRUD functionality.

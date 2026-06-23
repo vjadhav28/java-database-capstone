@@ -1,12 +1,16 @@
 package com.project.back_end.controllers;
 
+import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Doctor;
+import com.project.back_end.services.DoctorService;
 import com.project.back_end.services.Service1;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,6 +30,7 @@ public class DoctorController {
     private DoctorService doctorService;
     @Autowired
     private Service1 service;
+    private Object availableSlots;
 
     DoctorController(DoctorService doctorService, Service1 service) {
         this.doctorService = doctorService;
@@ -42,7 +47,7 @@ public class DoctorController {
         if (service.validateToken(token, user)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
-        Map<String, Object> availability = doctorService.getDoctorAvailability(doctorId, date);
+        Map<String, Object> availability = (Map<String, Object>) doctorService.getDoctorAvailability(doctorId, LocalDate.parse(date), availableSlots);
         return ResponseEntity.ok(availability);
     }
 
@@ -78,7 +83,7 @@ public class DoctorController {
 //    - Accepts a validated `Login` DTO containing credentials.
 //    - Delegates authentication to the `DoctorService` and returns login status and token information.
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> doctorLogin(@RequestBody @Valid Login login) {
+    public ResponseEntity<Map<String, Object>> doctorLogin(@RequestBody Login login) {
         Map<String, Object> response = doctorService.doctorLogin(login);
         if (response.containsKey("error")) {
             return ResponseEntity.status(401).body(response);
@@ -130,7 +135,7 @@ public class DoctorController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String time,
             @RequestParam(required = false) String speciality) {
-        List<Doctor> filteredDoctors = service.filterDoctors(name, time, speciality);
+        List<Doctor> filteredDoctors = (List<Doctor>) service.filterDoctor(name, time, speciality);
         return ResponseEntity.ok(Map.of("doctors", filteredDoctors));
 
     }

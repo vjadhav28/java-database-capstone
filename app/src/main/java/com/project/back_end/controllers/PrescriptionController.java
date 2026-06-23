@@ -45,7 +45,7 @@ public class PrescriptionController {
         if (service.validateToken(token, "doctor")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
-        boolean isSaved = prescriptionService.savePrescription(prescription);
+        boolean isSaved = prescriptionService.savePrescription(prescription).hasBody();
         if (isSaved) {
             return ResponseEntity.ok(Map.of("message", "Prescription saved successfully"));
         } else {
@@ -64,7 +64,7 @@ public class PrescriptionController {
         if (service.validateToken(token, "doctor")) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
-        Prescription prescription = prescriptionService.getPrescription(appointmentId);
+        ResponseEntity<Map<String, Prescription>> prescription = prescriptionService.getPrescription(appointmentId);
         if (prescription != null) {
             return ResponseEntity.ok(Map.of("prescription", prescription));
         } else {

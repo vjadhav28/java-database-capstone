@@ -68,9 +68,11 @@ public class Appointment {
     }
 
     public Long getDoctorId() {
+        return doctor.getId();
     }
 
     public Object getDateTime() {
+        return appointmentTime;
     }
 
 // @Entity annotation:

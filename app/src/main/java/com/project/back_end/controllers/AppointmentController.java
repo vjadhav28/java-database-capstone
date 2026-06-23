@@ -61,12 +61,12 @@ public class AppointmentController {
 //    - Uses service logic to validate the appointment data (e.g., check for doctor availability and time conflicts).
 //    - Returns success if booked, or appropriate error messages if the doctor ID is invalid or the slot is already taken.
     @PostMapping
-    public ResponseEntity<Appointment> bookAppointment(@RequestBody Appointment appointment, @RequestHeader String token) {
+    public ResponseEntity<Integer> bookAppointment(@RequestBody Appointment appointment, @RequestHeader String token) {
         if (service.validateToken(token, "patient")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         try {
-            Appointment bookedAppointment = appointmentService.bookAppointment(appointment);
+            int bookedAppointment = appointmentService.bookAppointment(appointment);
             return ResponseEntity.status(HttpStatus.CREATED).body(bookedAppointment);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

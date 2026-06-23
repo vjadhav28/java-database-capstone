@@ -96,7 +96,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
-            <version>2.5.4</version>
         </dependency>
 		<dependency>
 			<groupId>org.glassfish.hk2</groupId>
@@ -117,9 +116,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
+                    <release>21</release>
                 </configuration>
             </plugin>
         </plugins>
