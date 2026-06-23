@@ -37,7 +37,10 @@ public class Doctor {
     private String phone;
 
     @ElementCollection
-    private List<String> availableTimes;
+    private List<String> availableTime;
+
+    @Column(name = "time")
+    private String time;
 
     // Getters and Setters
     public Long getId() {
@@ -88,12 +91,12 @@ public class Doctor {
         this.phone = phone;
     }
 
-    public List<String> getAvailableTimes() {
-        return availableTimes;
+    public List<String> getAvailableTime() {
+        return availableTime;
     }
 
-    public void setAvailableTimes(List<String> availableTimes) {
-        this.availableTimes = availableTimes;
+    public void setAvailableTime(List<String> availableTime) {
+        this.availableTime = availableTime;
 // @Entity annotation:
 //    - Marks the class as a JPA entity, meaning it represents a table in the database.
 //    - Required for persistence frameworks (e.g., Hibernate) to map the class to a database table.

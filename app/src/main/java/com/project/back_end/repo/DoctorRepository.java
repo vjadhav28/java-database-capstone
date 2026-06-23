@@ -20,9 +20,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     List<Doctor> findByAvailableTime(String time);
 
-    List<Doctor> findBySpecialtyAndTime(String specialty, String time);
+//    List<Doctor> findByAvailableTimeContaining(String availableTime);
 
-    List<Doctor> findByNameAndTime(String name, String time);
+    List<Doctor> findBySpecialtyAndAvailableTime(String specialty, String time);
+
+    List<Doctor> findByNameAndAvailableTime(String name, String time);
 
     List<Doctor> findByNameAndSpecialty(String name, String specialty);
 

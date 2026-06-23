@@ -3,6 +3,8 @@ package com.project.back_end.repo;
 import com.project.back_end.models.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +21,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     void deleteAllByDoctorId(Long doctorId);
     List<Appointment> findByPatientId(Long patientId);
     List<Appointment> findByPatient_IdAndStatusOrderByAppointmentTimeAsc(Long patientId, int status);
-    List<Appointment> filterByDoctorNameAndPatientId(String doctorName, Long patientId);
-    List<Appointment> filterByDoctorNameAndPatientIdAndStatus(String doctorName, Long patientId, int status);
+    List<Appointment> findByDoctorNameAndPatientId(String doctorName, Long patientId);
+
+    List<Appointment> findByDoctor_NameAndPatient_IdAndStatus(String doctorName, Long patientId, int status);
     @Modifying
     @Transactional
-    void updateStatus(int status, long id);
+    @Query("UPDATE Appointment a SET a.status = :status WHERE a.id = :id")
+    void updateStatus(@Param("status") int status, @Param("id") Long id);
 
     List<Appointment> findByPatientIdAndDoctorName(Long patientId, String doctorName);
 
@@ -31,8 +35,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findByPatientIdAndStatus(Long patientId, int status);
 
-    List<Appointment> findByDoctorIdAndDate(Long doctorId, LocalDate date);
+    // For queries by Doctor and appointment date:
+    List<Appointment> findByDoctor_IdAndAppointmentTime(Long doctorId, LocalDateTime appointmentTime);
 
+    // For queries by Doctor and time range (if you add a LocalDateTime "appointmentTime"):
+    List<Appointment> findByDoctor_IdAndAppointmentTimeBetween(Long doctorId, LocalDateTime start, LocalDateTime end);
     void deleteByDoctorId(Long id);
 
     // 1. Extend JpaRepository:

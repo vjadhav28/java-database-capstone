@@ -3,8 +3,11 @@ package com.project.back_end.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Appointment {
@@ -13,7 +16,8 @@ public class Appointment {
     private Long id;
 
     @ManyToOne
-    @NotNull(message = "Doctor cannot be null")
+    @JoinColumn(name = "doctor_id")
+    @NotNull
     private Doctor doctor;
 
     @ManyToOne
@@ -27,6 +31,7 @@ public class Appointment {
     private int status; // 0 for scheduled, 1 for completed
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -67,15 +72,12 @@ public class Appointment {
         this.status = status;
     }
 
-    public Long getDoctorId() {
-        return doctor.getId();
+    public void removeAll(List<String> bookedSlots) {
+        //remove booked slots from the schedule
+        bookedSlots.removeIf(slot -> slot.equals("time"));
     }
-
-    public Object getDateTime() {
-        return appointmentTime;
-    }
-
-// @Entity annotation:
+}
+    // @Entity annotation:
 //    - Marks the class as a JPA entity, meaning it represents a table in the database.
 //    - Required for persistence frameworks (e.g., Hibernate) to map the class to a database table.
 
@@ -140,6 +142,4 @@ public class Appointment {
 
 // 10. Getters and Setters:
 //    - Standard getter and setter methods are provided for accessing and modifying the fields: id, doctor, patient, appointmentTime, status, etc.
-
-}
 

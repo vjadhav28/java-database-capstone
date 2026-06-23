@@ -1,6 +1,7 @@
 package com.project.back_end.controllers;
 
 import com.project.back_end.DTO.Login;
+import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.services.DoctorService;
 import com.project.back_end.services.Service1;
@@ -30,7 +31,7 @@ public class DoctorController {
     private DoctorService doctorService;
     @Autowired
     private Service1 service;
-    private Object availableSlots;
+    private Appointment availableSlots;
 
     DoctorController(DoctorService doctorService, Service1 service) {
         this.doctorService = doctorService;
@@ -47,7 +48,7 @@ public class DoctorController {
         if (service.validateToken(token, user)) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
         }
-        Map<String, Object> availability = (Map<String, Object>) doctorService.getDoctorAvailability(doctorId, LocalDate.parse(date), availableSlots);
+        Map<String, Object> availability = doctorService.getDoctorAvailability(doctorId, LocalDate.parse(date), availableSlots);
         return ResponseEntity.ok(availability);
     }
 

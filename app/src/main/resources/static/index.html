@@ -106,14 +106,15 @@ and triggers modal-based login functionality.
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/  Logo.png" />
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo/logo.png" />
     <title>Select Role</title>
-    <link rel="stylesheet" href="../assets/css/index.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <script src="../js/util.js" defer></script>
-    <script src="../js/render.js" defer></script>
-    <script src="../js/components/header.js" defer></script>
-    <script src="../js/components/footer.js" defer></script>
+    <link rel="stylesheet" href="assets/css/index.css">
+     <link rel="stylesheet" href= "assets/css/style.css">
+    <script src="js/util.js" defer></script>
+    <script src="js/render.js" defer></script>
+    <script src="js/components/header.js" defer></script>
+    <script src="js/components/footer.js" defer></script>
+    <script type="module" src="js/services/index.js"></script>
 </head>
 <body onload="renderContent()">
     <div class="container">
@@ -128,6 +129,12 @@ and triggers modal-based login functionality.
                 </div>
             </main>
             <div id="footer"></div>
+        </div>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <div id="modal-body"></div>
         </div>
     </div>
 </body>

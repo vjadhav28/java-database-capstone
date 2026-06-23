@@ -39,9 +39,9 @@ Import the overlay function for booking appointments from loggedPatient.js
   Append doctor info and action buttons to the car
   Return the complete doctor card element
 */
-import { showOverlay } from "./loggedPatient.js";
-import { deleteDoctor } from "./doctorServices.js";
-import { getPatient } from "./patientServices.js";
+import { showOverlay } from "../loggedPatient.js";
+import { deleteDoctor } from "../services/doctorServices.js";
+import { getPatientData } from "../services/patientServices.js";
 
 export function getDoctorCard(doctor) {
   // Create the main container for the doctor card
@@ -158,7 +158,7 @@ export function getDoctorCard(doctor) {
 
       try {
         // Fetch patient data with token
-        const patientData = await getPatient(token);
+        const patientData = await getPatientData(token);
 
         // Show booking overlay UI with doctor and patient info
         showOverlay(doctor, patientData);

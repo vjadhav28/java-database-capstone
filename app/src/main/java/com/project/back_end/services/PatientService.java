@@ -66,8 +66,8 @@ public class PatientService {
             List<AppointmentDTO> appointmentDTOs = appointments.stream()
                     .map(appointment -> new AppointmentDTO(
                             appointment.getId(),
-                            doctorRepository.findById(appointment.getDoctorId()).orElseThrow().getName(),
-                            appointment.getDateTime(),
+                            doctorRepository.findById(appointment.getDoctor().getId()).orElseThrow().getName(),
+                            appointment.getAppointmentTime(),
                             appointment.getStatus()
                     ))
                     .toList();
@@ -91,8 +91,8 @@ public class PatientService {
              List<AppointmentDTO> appointmentDTOs = appointments.stream()
                      .map(appointment -> new AppointmentDTO(
                              appointment.getId(),
-                             doctorRepository.findById(appointment.getDoctorId()).orElseThrow().getName(),
-                             appointment.getDateTime(),
+                             doctorRepository.findById(appointment.getDoctor().getId()).orElseThrow().getName(),
+                             appointment.getAppointmentTime(),
                              appointment.getStatus()
                      ))
                      .toList();
@@ -115,8 +115,8 @@ public class PatientService {
              List<AppointmentDTO> appointmentDTOs = appointments.stream()
                      .map(appointment -> new AppointmentDTO(
                              appointment.getId(),
-                             doctorRepository.findById(appointment.getDoctorId()).orElseThrow().getName(),
-                             appointment.getDateTime(),
+                             doctorRepository.findById(appointment.getDoctor().getId()).orElseThrow().getName(),
+                             appointment.getAppointmentTime(),
                              appointment.getStatus()
                      ))
                      .collect(Collectors.toList());
@@ -150,8 +150,8 @@ public class PatientService {
             List<AppointmentDTO> appointmentDTOs = appointments.stream()
                     .map(appointment -> new AppointmentDTO(
                             appointment.getId(),
-                            doctorRepository.findById(appointment.getDoctorId()).orElseThrow().getName(),
-                            appointment.getDateTime(),
+                            doctorRepository.findById(appointment.getDoctor().getId()).orElseThrow().getName(),
+                            appointment.getAppointmentTime(),
                             appointment.getStatus()
                     ))
                     .collect(Collectors.toList());
@@ -174,8 +174,8 @@ public class PatientService {
              List<AppointmentDTO> appointmentDTOs = appointments.stream()
                      .map(appointment -> new AppointmentDTO(
                              appointment.getId(),
-                             doctorRepository.findById(appointment.getDoctorId()).orElseThrow().getName(),
-                             appointment.getDateTime(),
+                             doctorRepository.findById(appointment.getDoctor().getId()).orElseThrow().getName(),
+                             appointment.getAppointmentTime(),
                              appointment.getStatus()
                      ))
                      .collect(Collectors.toList());

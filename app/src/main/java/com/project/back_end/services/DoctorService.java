@@ -44,15 +44,13 @@ public class DoctorService {
 //    - The method fetches all appointments for the doctor on the given date and calculates the availability by comparing against booked slots.
 //    - Instruction: Ensure that the time slots are properly formatted and the available slots are correctly filtered.
     @Transactional
-    public ResponseEntity<Map<String, Object>> getDoctorAvailability(Long doctorId, LocalDate date, Object availableSlots) {
-        try {
-            List<Appointment> bookedAppointments = appointmentRepository.findByDoctorIdAndDate(doctorId, date);
-            // Logic to calculate available slots
-            return ResponseEntity.ok(Map.of("availableSlots", availableSlots));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch doctor availability"));
-        }
+    public Map<String, Object> getDoctorAvailability(Long doctorId, LocalDate date, Appointment availableSlots) {
+        List<Appointment> bookedAppointments = appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, date.atStartOfDay(), date.atStartOfDay().plusDays(1));
+        List<String> bookedSlots = bookedAppointments.stream()
+                .map(appointment -> appointment.getAppointmentTime().toLocalTime().toString())
+                .toList();
+        availableSlots.removeAll(bookedSlots);
+        return Map.of("availableSlots", availableSlots);
     }
 
     // 5. **saveDoctor Method**:
@@ -173,9 +171,9 @@ public class DoctorService {
 //    - This method processes a list of doctors and their available times to return those that fit the time criteria.
 //    - Instruction: Ensure that the time filtering logic correctly handles both AM and PM time slots and edge cases.
     @Transactional
-    public ResponseEntity<Map<String, Object>> filterDoctorByTime(String time) {
+    public ResponseEntity<Map<String, Object>> filterDoctorByTime(String availableTime) {
         try {
-            List<Doctor> doctors = doctorRepository.findByAvailableTime(time);
+            List<Doctor> doctors = doctorRepository.findByAvailableTime(availableTime);
             return ResponseEntity.ok(Map.of("doctors", doctors));
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,9 +186,9 @@ public class DoctorService {
 //    - Fetches doctors based on partial name matching and filters the results to include only those available during the specified time period.
 //    - Instruction: Ensure that the method correctly filters doctors based on the given name and time of day (AM/PM).
     @Transactional
-    public ResponseEntity<Map<String, Object>> filterDoctorByNameAndTime(String name, String time) {
+    public ResponseEntity<Map<String, Object>> filterDoctorByNameAndTime(String name, String availableTime) {
         try {
-            List<Doctor> doctors = doctorRepository.findByNameAndTime(name, time);
+            List<Doctor> doctors = doctorRepository.findByNameAndAvailableTime(name, availableTime);
             return ResponseEntity.ok(Map.of("doctors", doctors));
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,12 +216,12 @@ public class DoctorService {
 //    - Fetches doctors based on the specified specialty and filters them based on their available time slots for AM/PM.
 //    - Instruction: Ensure the time filtering is accurately applied based on the given specialty and time period (AM/PM).
     @Transactional
-    public ResponseEntity<Map<String, Object>> filterDoctorByTimeAndSpecility(String time, String specialty) {
+    public ResponseEntity<Map<String, Object>> filterDoctorByTimeAndSpecility(String availableTime, String specialty) {
         try {
             List<Doctor> doctors = doctorRepository.findBySpecialtyIgnoreCase(specialty);
             List<Doctor> filteredDoctors = doctors.stream()
-                    .filter(doctor -> doctor.getAvailableTimes().stream()
-                            .anyMatch(availableTime -> availableTime.equalsIgnoreCase(time)))
+                    .filter(doctor -> doctor.getAvailableTime().stream()
+                            .anyMatch(at -> at.equalsIgnoreCase(availableTime)))
                     .toList();
             return ResponseEntity.ok(Map.of("doctors", filteredDoctors));
         } catch (Exception e) {
@@ -252,12 +250,12 @@ public class DoctorService {
 //    - The method checks all doctors' available times and returns those available during the specified time period.
 //    - Instruction: Ensure proper filtering logic to handle AM/PM time periods.
     @Transactional
-    public ResponseEntity<Map<String, Object>> filterDoctorsByTime(String time) {
+    public ResponseEntity<Map<String, Object>> filterDoctorsByTime(String availableTime) {
         try {
             List<Doctor> doctors = doctorRepository.findAll();
             List<Doctor> filteredDoctors = doctors.stream()
-                    .filter(doctor -> doctor.getAvailableTimes().stream()
-                            .anyMatch(availableTime -> availableTime.equalsIgnoreCase(time)))
+                    .filter(doctor -> doctor.getAvailableTime().stream()
+                            .anyMatch(at -> at.equalsIgnoreCase(availableTime)))
                     .toList();
             return ResponseEntity.ok(Map.of("doctors", filteredDoctors));
         } catch (Exception e) {

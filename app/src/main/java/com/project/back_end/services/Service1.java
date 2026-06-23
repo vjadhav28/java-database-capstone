@@ -158,26 +158,26 @@ public class Service1 {
     public ResponseEntity<Map<String, Object>> filterPatient(String condition, String name, String token) {
         return null;
     }
-    public ResponseEntity<Map<String, Object>> filterDoctor(String name, String specialty, String time) {
-        if (name == null && specialty == null && time == null) {
+    public ResponseEntity<Map<String, Object>> filterDoctor(String name, String specialty, String availableTime) {
+        if (name == null && specialty == null && availableTime == null) {
             return ResponseEntity.ok(Map.of("doctors", doctorRepository.findAll()));
         }
         try {
             List<Doctor> doctors;
-            if (name != null && specialty != null && time != null) {
-                doctors = doctorRepository.findByNameAndSpecialtyAndTime(name, specialty, time);
+            if (name != null && specialty != null && availableTime != null) {
+                doctors = doctorRepository.findByNameAndSpecialtyAndTime(name, specialty, availableTime);
             } else if (name != null && specialty != null) {
                 doctors = doctorRepository.findByNameAndSpecialty(name, specialty);
-            } else if (name != null && time != null) {
-                doctors = doctorRepository.findByNameAndTime(name, time);
-            } else if (specialty != null && time != null) {
-                doctors = doctorRepository.findBySpecialtyAndTime(specialty, time);
+            } else if (name != null && availableTime != null) {
+                doctors = doctorRepository.findByNameAndAvailableTime(name, availableTime);
+            } else if (specialty != null && availableTime != null) {
+                doctors = doctorRepository.findBySpecialtyAndAvailableTime(specialty, availableTime);
             } else if (name != null) {
                 doctors = doctorRepository.findByName(name);
             } else if (specialty != null) {
                 doctors = doctorRepository.findBySpecialty(specialty);
-            } else if (time != null) {
-                doctors = doctorRepository.findByAvailableTime(time);
+            } else if (availableTime != null) {
+                doctors = doctorRepository.findByAvailableTime(availableTime);
             } else {
                 doctors = doctorRepository.findAll();
             }
@@ -193,8 +193,8 @@ public class Service1 {
         if (doctor == null) {
             return ResponseEntity.status(400).body(Map.of("error", "Doctor not found"));
         }
-        List<String> availableTimes = doctor.getAvailableTimes();
-        for (String availableTime : availableTimes) {
+        List<String> at = doctor.getAvailableTime();
+        for (String availableTime : at) {
             if (availableTime.equals(time)) {
                 return ResponseEntity.ok(Map.of("isValid", 1));
             }

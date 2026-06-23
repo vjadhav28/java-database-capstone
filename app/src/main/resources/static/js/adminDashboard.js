@@ -73,7 +73,7 @@
 import { getDoctors, filterDoctors, saveDoctor } from "./services/doctorServices.js";
 import { getPatientData } from "./services/patientServices.js";
 import { getDoctorCard } from "./components/doctorCard.js";
-import { openModal } from "./components/modal.js";
+import { openModal } from "./components/modals.js";
 
 const contentDiv = document.getElementById("content");
 const searchBar = document.getElementById("searchBar");
@@ -130,8 +130,8 @@ window.adminAddDoctor = async function() {
   const email = document.getElementById("doctorEmail").value;
   const phone = document.getElementById("doctorPhone").value;
   const password = document.getElementById("doctorPassword").value;
-  const specialty = document.getElementById("doctorSpecialty").value;
-  const availableTimes = Array.from(document.querySelectorAll(".available-time:checked")).map(input => input.value);
+  const specialty = document.getElementById("specialization").value;
+  const availableTimes = Array.from(document.querySelectorAll("input[name='availability']:checked")).map(input => input.value);
 
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -145,8 +145,7 @@ window.adminAddDoctor = async function() {
     const result = await saveDoctor(doctor, token);
     if (result.success) {
       alert(result.message);
-      document.getElementById("addDoctorForm").reset();
-      document.getElementById("addDoctorModal").style.display = "none";
+      document.getElementById("modal").style.display = "none";
       loadDoctorCards();
     } else {
       alert("Failed to add doctor: " + result.message);

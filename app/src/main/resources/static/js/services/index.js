@@ -56,27 +56,32 @@
     - Log the error to the console
     - Show a generic error message
 */
-import { openModal } from "../components/modal.js";
+import { openModal } from "../components/modals.js";
 import { API_BASE_URL } from "../config/config.js";
 const ADMIN_API = `${API_BASE_URL}/admin/login`;
 const DOCTOR_API = `${API_BASE_URL}/doctor/login`;
 
 window.onload = function() {
-  const adminLoginBtn = document.getElementById("adminLogin");
-  const doctorLoginBtn = document.getElementById("doctorLogin");
+  const adminBtn = document.getElementById("adminBtn");
+  const patientBtn = document.getElementById("patientBtn");
+  const doctorBtn = document.getElementById("doctorBtn");
 
-  if (adminLoginBtn) {
-    adminLoginBtn.addEventListener("click", () => openModal('adminLogin'));
+  if (adminBtn) {
+    adminBtn.addEventListener("click", () => openModal('adminLogin'));
   }
 
-  if (doctorLoginBtn) {
-    doctorLoginBtn.addEventListener("click", () => openModal('doctorLogin'));
+  if (patientBtn) {
+    patientBtn.addEventListener("click", () => openModal('patientLogin'));
+  }
+
+  if (doctorBtn) {
+    doctorBtn.addEventListener("click", () => openModal('doctorLogin'));
   }
 };
 
 window.adminLoginHandler = async function() {
-  const username = document.getElementById("adminUsername").value;
-  const password = document.getElementById("adminPassword").value;
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
   const admin = { username, password };
 
@@ -103,8 +108,8 @@ window.adminLoginHandler = async function() {
 };
 
 window.doctorLoginHandler = async function() {
-  const email = document.getElementById("doctorEmail").value;
-  const password = document.getElementById("doctorPassword").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
   const doctor = { email, password };
 
